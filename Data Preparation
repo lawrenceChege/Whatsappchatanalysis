@@ -1,0 +1,55 @@
+# Exploration of the dataset indicates that most of the data exist in a txt format, and in fomr of lines
+# '''So we prepare a framework that arranges the data into groups
+# groups that can be converted into rows and columns and hence a dataframe.
+# To do this, we separate the aspects of the data, by defining
+# such points from where it is separated. The first part is the date
+# and time, this is how I achieved that'''
+
+
+import regex
+
+
+def date_time(s):
+    # s gives our string, as the date is found in the string
+    # indicate the pattern that is followed by date and time: 27/12/2020, 15:20
+    pattern = '^([0-9]+)(\/)([0-9]+)(\/)([0-9]+), ([0-9]+):([0-9]+)[ ]?(AM|PM|am|pm)? -'
+    # we then match regex to match the pattern
+    result = regex.match(pattern, s)
+    if result:
+        return True
+    return False
+
+
+# the next part in teh text file is the messenger/ texter contacts
+# we therefore define a class that separates them from the string, distintively
+
+def find_texter(s):
+    # '''The texter is separated from the message by a colon, we therefore seperate
+    # the message and the text at this point'''
+    s = s.split(":")
+    # The longest each texter has for a name is 2, therefore
+    if len(s) == 2:
+        return True
+    else:
+        return False
+
+
+# '''We now get to the message definition
+# The message in the string starts after a short dash, and we
+# pick it as our separator'''
+
+def getTextMessage(line):
+    splitline = line.spit(' - ')
+    # date and time starts, with no separator, hence
+    dateTime = splitline[0]
+    date, time = dateTime.split(", ")
+    TextMessage = " ".join(splitline[1:])
+    if find_texter(TextMessage):
+        splitTextMessage = TextMessage.split(": ")
+        texter = splitTextMessage[0]
+        TextMessage = " ".join(splitTextMessage[1:])
+    else:
+        texter = None
+    return date, time, texter, TextMessage
+
+# From here we can now import the data, and it will be organized as we have prepared it to be organized
